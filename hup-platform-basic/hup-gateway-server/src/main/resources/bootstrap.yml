@@ -12,30 +12,34 @@ spring:
       discovery:
         enabled: true
         service-id: config-server
+    gateway:
+      routes:
+      - id: ucenter
+        uri: lb://ucenter-server
+        predicates:
+        - Path=/ucenter/**
 
-zuul:
-  sensitive-headers: Cookie,Set-Cookie
-  routes:
-    ucenter:
-      path: /ucenter/**
-      serviceId: ucenter-server
-    blog:
-      path: /blog/**
-      serviceId: blog-platform
-  add-proxy-headers: true
-  strip-prefix: true
 
 ribbon:
-  ReadTimeout: 30000
-  ConnectTimeout: 3000
+  ReadTimeout: 300000
+  ConnectTimeout: 30000
 
-management:
-  security:
-    enabled: false
 
 hystrix:
   command:
     default:
       execution:
-        timeout:
-          enabled: false
+        isolation:
+          thread:
+            timeoutInMilliseconds: 30000
+
+#Spring Boot 2.0 的Actuator只暴露了health和info端点，其它的一堆怎么也打不开；下面配置是打开所有端点
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: ALWAYS
+
