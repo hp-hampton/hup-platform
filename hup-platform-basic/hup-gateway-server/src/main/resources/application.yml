@@ -20,7 +20,8 @@ spring:
         uri: lb://ucenter-server
         predicates:
         - Path=/ucenter/**
-
+        filters:
+        - StripPrefix=1
 
 ribbon:
   ReadTimeout: 300000
